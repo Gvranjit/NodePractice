@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+     <%- include('../includes/head.ejs') %>
+
+     <body>
+          <%- include('../includes/navigation.ejs') %>
+
+          <main>
+               <div class="grid">
+                    <%if(prods.length>0) {for (product of prods){%>
+                    <article class="card product-item">
+                         <header class="card__header">
+                              <h1 class="product__title"><%=product.title%></h1>
+                         </header>
+                         <div class="card__image">
+                              <img src="<%=product.imageUrl%>" alt="A Book" />
+                         </div>
+                         <div class="card__content">
+                              <h2 class="product__price">
+                                   Rs.<%=product.price%>
+                              </h2>
+                              <p class="product__description">
+                                   <%=product.description%>
+                              </p>
+                         </div>
+                         <div class="card__actions">
+                              <a href="/admin/edit-product/<%= product._id %>?edit=true" class="btn" type="submit">
+                                   Edit</a>  
+                              </button>
+                              <form class="btn__form" action="/admin/delete-product/<%=product._id%>" method="POST">
+                                    <!--This is a dirty way. Lets try passing the value of product id only and find the price in the backend. -->
+                                    <!-- <input type="hidden" name  = "productPrice" value ="<%=product.price%>"></input> -->
+                                   <button class="btn"  type="submit">
+                                        <input type="hidden" name="_csrf" value="<%=csrfToken%>" />
+                                       
+                                   Delete
+                              </button></form>
+                              
+                         </div>
+                    </article>
+                    <% }} else{ %>
+                    <h1>No products found</h1>
+                    <%}%>
+               </div>
+          </main>
+          <%- include('../includes/end.ejs') %>
+     </body>
+</html>

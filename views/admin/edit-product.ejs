@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+     <%- include('../includes/head.ejs') %>
+     <body>
+          <%- include('../includes/navigation.ejs') %>
+          <main>
+               <form
+                    class="product-form"
+                    action="/admin/<% if(editMode==='true'){%>edit-product<%}else{%>add-product<%}%>"
+                    method="POST"
+               >
+                    <div class="form-control">
+                         <label for="title">Book Title</label>
+                         <input
+                              type="text"
+                              name="title"
+                              value="<% if(editMode==='true'){%><%=product.title%><%};%>"
+                         />
+                         <label for="imageUrl">Image Url</label>
+                         <input
+                              type="text"
+                              name="imageUrl"
+                              value="<% if(editMode==='true'){%><%=product.imageUrl%><%};%>"
+                         />
+                         <label for="description">Description</label>
+                         <textarea name="description" id="description" rows="5">
+<% if(editMode==='true'){%><%=product.description%><%};%></textarea
+                         >
+                         <label for="price">Price</label>
+                         <input
+                              type="number"
+                              name="price"
+                              step="0.01"
+                              value="<% if(editMode==='true'){%><%=product.price%><%};%>"
+                         />
+                    </div>
+                    <%if(editMode==='true'){%><input
+                         type="hidden"
+                         value="<%=product._id%>"
+                         name="productId"
+                    /><%}%>
+                    <button class="btn" type="submit">
+                         <input type="hidden" name="_csrf" value="<%=csrfToken%>" />
+                         <% if(editMode==='true'){%> Update <%}else{%> Add Product <%}%>
+                    </button>
+               </form>
+          </main>
+          <%- include('../includes/end.ejs') %>
+     </body>
+</html>

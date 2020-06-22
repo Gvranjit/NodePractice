@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+     <%- include('../includes/head.ejs') %>
+
+     <body>
+          <%- include('../includes/navigation.ejs') %>
+
+          <main>
+               <div class="centered">
+                    <ul>
+                         <li></li>
+                         <% orders.forEach(order=>{ %>
+                         <h1>Customer Name: <%=order.userId.email%></h1>
+                         <li><h1># Order ID: <%= order._id %></h1></li>
+                         <% order.orderItems.forEach(product=>{ %>
+                         <li>Product Name: <%=product.productId.title%></li>
+                         <li>Product Price: <%=product.productId.price %></li>
+                         <li>Purchased Quantity: <%=product.qty %></li>
+                         <li>________________________________________</li>
+                         <% }); %> <% }); %>
+                    </ul>
+               </div>
+          </main>
+          <%- include('../includes/end.ejs') %>
+     </body>
+</html>
