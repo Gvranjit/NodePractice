@@ -5,9 +5,9 @@
      <body>
           <%- include('../includes/navigation.ejs') %>
           <main>
-               <% if(errorMessage.length>0){ %>
-               <div class="message error-message"><%=errorMessage%></div>
-               <% } %> <% if(message.length>0){ %>
+               <% if (errorMessage.length>0) { %><% errorMessage.forEach(error=>{%> -
+               <div class="message error-message"><%=error.msg%><br /></div>
+               <% }) %><% } %> <% if(message.length>0){ %>
                <div class="message"><%=message%></div>
                <% } %>
                <div class="login-form">

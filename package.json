@@ -10,7 +10,9 @@
      "author": "Code",
      "license": "ISC",
      "devDependencies": {
-          "nodemon": "^2.0.4"
+          "nodemon": "^2.0.4",
+          "validator": "^13.1.1",
+          "validator.js": "^2.0.4"
      },
      "dependencies": {
           "bcryptjs": "^2.4.3",

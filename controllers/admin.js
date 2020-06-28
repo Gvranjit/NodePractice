@@ -1,6 +1,6 @@
 const Product = require("../models/product.js");
 // const products = new Product();
-
+const { validationResult } = require("express-validator");
 exports.getAddProduct = (req, res, next) => {
      // console.log('In the add-product middleware');
 
@@ -15,7 +15,24 @@ exports.postAddProduct = (req, res, next) => {
      //console.log(req.body);
 
      const r = req.body;
-
+     const errors = validationResult(req);
+     console.log(errors);
+     if (!errors.isEmpty()) {
+          return res.render("admin/edit-product", {
+               pageTitle: "Add Product",
+               path: "add-product",
+               editMode: false,
+               hasError: true,
+               errorMessage: errors.array(),
+               product: {
+                    title: r.title,
+                    description: r.description,
+                    price: r.price,
+                    imageUrl: r.imageUrl,
+               },
+          });
+     }
+     req.flash("message", "New Product was added successfully");
      const product = new Product({
           title: r.title,
           description: r.description,
@@ -67,17 +84,40 @@ exports.postUpdateProduct = (req, res, next) => {
      const updatedDescription = req.body.description;
      const updatedImageUrl = req.body.imageUrl;
 
+     const errors = validationResult(req);
+     console.log(errors);
+     if (!errors.isEmpty()) {
+          return res.render("admin/edit-product", {
+               pageTitle: "Edit Product",
+               path: "edit-product",
+               editMode: "true",
+               hasError: true,
+               errorMessage: errors.array(),
+               product: {
+                    title: updatedTitle,
+                    description: updatedDescription,
+                    price: updatedPrice,
+                    imageUrl: updatedImageUrl,
+                    _id: productId,
+               },
+          });
+     }
      Product.findById(productId)
+
           .then((p) => {
+               if (p.userId.toString() !== req.session.user._id.toString()) {
+                    console.log("redirecting");
+                    return res.redirect("/");
+               }
                p.title = updatedTitle;
                p.description = updatedDescription;
                p.price = updatedPrice;
                p.imageUrl = updatedImageUrl;
-               return p.save();
+               return p.save().then((result) => {
+                    res.redirect("/admin/admin-product-list");
+               });
           })
-          .then((result) => {
-               res.redirect("/admin/admin-product-list");
-          })
+
           .catch((err) => console.log(err));
 
      // /
@@ -87,7 +127,7 @@ exports.postDeleteProduct = (req, res, next) => {
      const productId = req.params.productId;
      // const productPrice = req.body.productPrice;
      // since the above is a dirty method,this is not preferable
-     Product.findByIdAndDelete(productId)
+     Product.deleteOne({ userId: req.session.user._id, _id: productId })
 
           .then((result) => {
                res.redirect("/admin/admin-product-list");

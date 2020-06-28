@@ -4,6 +4,11 @@
      <body>
           <%- include('../includes/navigation.ejs') %>
           <main>
+               <% if (errorMessage.length>0) { %><% errorMessage.forEach(error=>{%> -
+                    <div class="message error-message"><%=error.msg%><br /></div>
+                    <% }) %><% } %> <% if(message.length>0){ %>
+                    <div class="message"><%=message%></div>
+                    <% } %>
                <form
                     class="product-form"
                     action="/admin/<% if(editMode==='true'){%>edit-product<%}else{%>add-product<%}%>"
@@ -12,26 +17,35 @@
                     <div class="form-control">
                          <label for="title">Book Title</label>
                          <input
+                         class=" <%= errorMessage.find(e=>e.param==='title')?'invalid':''%> "
                               type="text"
                               name="title"
-                              value="<% if(editMode==='true'){%><%=product.title%><%};%>"
+                              value="<% if(editMode==='true'||hasError){%><%=product.title%><%};%>"
+                              value
                          />
                          <label for="imageUrl">Image Url</label>
                          <input
+                         class=" <%= errorMessage.find(e=>e.param==='imageUrl')?'invalid':''%> "
                               type="text"
                               name="imageUrl"
-                              value="<% if(editMode==='true'){%><%=product.imageUrl%><%};%>"
+                              value="<% if(editMode==='true'||hasError){%><%=product.imageUrl%><%};%>"
                          />
                          <label for="description">Description</label>
-                         <textarea name="description" id="description" rows="5">
-<% if(editMode==='true'){%><%=product.description%><%};%></textarea
+                         <textarea 
+                              class=" <%= errorMessage.find(e=>e.param==='description')?'invalid':''%> "\
+                              
+                              
+                              name="description" 
+                              id="description" 
+                              rows="5"><% if(editMode==='true'||hasError){%><%=product.description%><%};%></textarea
                          >
                          <label for="price">Price</label>
                          <input
+                              class=" <%= errorMessage.find(e=>e.param==='price')?'invalid':''%> "
                               type="number"
                               name="price"
                               step="0.01"
-                              value="<% if(editMode==='true'){%><%=product.price%><%};%>"
+                              value="<% if(editMode==='true'||hasError){%><%=product.price%><%};%>"
                          />
                     </div>
                     <%if(editMode==='true'){%><input

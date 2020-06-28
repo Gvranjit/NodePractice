@@ -10,15 +10,22 @@ const adminController = require("../controllers/admin.js");
 
 const isAuth = require("../middleware/is-auth");
 
+const validation = require("../middleware/validator");
+
 router.get("/add-product", isAuth, adminController.getAddProduct);
 
-router.post("/add-product", isAuth, adminController.postAddProduct);
+router.post("/add-product", isAuth, validation.checkBookDetails, adminController.postAddProduct);
 
 router.get("/edit-product/:productId", isAuth, adminController.getEditProduct);
 
 router.post("/delete-product/:productId", isAuth, adminController.postDeleteProduct);
 
-router.post("/edit-product", isAuth, adminController.postUpdateProduct);
+router.post(
+     "/edit-product",
+     isAuth,
+     validation.checkBookDetails,
+     adminController.postUpdateProduct
+);
 
 // //router.get("/added-product", adminController.getAddedProduct);
 
