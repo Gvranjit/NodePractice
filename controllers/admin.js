@@ -1,6 +1,10 @@
 const Product = require("../models/product.js");
 // const products = new Product();
 const { validationResult } = require("express-validator");
+const mongoose = require("mongoose");
+
+function throw500(err) {}
+
 exports.getAddProduct = (req, res, next) => {
      // console.log('In the add-product middleware');
 
@@ -12,9 +16,10 @@ exports.getAddProduct = (req, res, next) => {
 };
 
 exports.postAddProduct = (req, res, next) => {
-     //console.log(req.body);
+     console.log("TESTINGGGGGGGGGGGGGGG", req.file);
 
      const r = req.body;
+     console.log("IMAGE :  ", req.file);
      const errors = validationResult(req);
      console.log(errors);
      if (!errors.isEmpty()) {
@@ -28,16 +33,16 @@ exports.postAddProduct = (req, res, next) => {
                     title: r.title,
                     description: r.description,
                     price: r.price,
-                    imageUrl: r.imageUrl,
+                    imageUrl: req.file,
                },
           });
      }
-     req.flash("message", "New Product was added successfully");
+
      const product = new Product({
           title: r.title,
           description: r.description,
           price: r.price,
-          imageUrl: r.imageUrl,
+          imageUrl: req.file,
           userId: req.session.user, //you could do  user._id but its not necessary because Mongoose Filters the ID out for you.
      });
 
@@ -45,9 +50,15 @@ exports.postAddProduct = (req, res, next) => {
           .save()
           .then((result) => {
                console.log("Product Created ");
+               req.flash("message", "New Product was added successfully");
                res.redirect("/admin/add-product");
           })
-          .catch((err) => console.log(err));
+          .catch((err) => {
+               console.log("THERE WAS A SYSTEM ERRRORRR");
+               const error = new Error(err);
+               error.httpStatusCode = 500;
+               return next(error);
+          });
 };
 exports.getEditProduct = (req, res, next) => {
      // console.log('In the add-product middleware');

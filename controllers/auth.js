@@ -25,7 +25,7 @@ const transporter = nodemailer.createTransport({
           ciphers: "SSLv3",
      },
      auth: {
-          user: "gvranjit@hotmail.com",
+          user: emailSender,
           pass: password,
      },
 });

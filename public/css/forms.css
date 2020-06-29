@@ -25,3 +25,9 @@
      border-color: red;
      color: red;
 }
+
+.error-message {
+     border-color: red;
+     background-color: rgb(248, 153, 153);
+     color: rgb(136, 5, 5);
+}

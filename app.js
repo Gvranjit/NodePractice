@@ -9,6 +9,7 @@ const User = require("./models/user");
 const express = require("express");
 const session = require("express-session");
 const bodyParser = require("body-parser");
+const multer = require("multer");
 const mongoose = require("mongoose");
 const MongoDbStore = require("connect-mongodb-session")(session);
 const mongoDbUri = "mongodb://localhost:27017/shop";
@@ -32,10 +33,18 @@ const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 const errorHandler = require("./routes/error");
 const authRoutes = require("./routes/auth");
-
+const fileStorage = multer.diskStorage({
+     destination: (req, file, cb) => {
+          cb(null, "images");
+     },
+     filename: (req, file, cb) => {
+          cb(null, Date.now().toString() + "-" + file.originalname);
+     },
+});
 // const mongoConnect = require("./helpers/database").mongoConnect;
 
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(multer({ storage: fileStorage }).single("image"));
 
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -59,12 +68,17 @@ app.use((req, res, next) => {
      if (req.session.user) {
           User.findById(req.session.user._id)
                .then((user) => {
+                    if (!user) {
+                         return next();
+                    }
                     console.log(user);
                     req.session.user = user;
                     console.log(req.session);
                     next();
                })
-               .catch((err) => console.log(err));
+               .catch((err) => {
+                    throw new Error(err);
+               });
      } else {
           next();
      }
@@ -89,6 +103,12 @@ app.use(authRoutes);
 
 app.use(errorHandler);
 
+app.use((error, req, res, next) => {
+     res.status(error.httpStatusCode).render("500", {
+          pageTitle: "ERROR",
+          path: "Error",
+     });
+});
 //connection
 
 mongoose

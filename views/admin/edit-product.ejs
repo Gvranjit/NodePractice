@@ -13,6 +13,7 @@
                     class="product-form"
                     action="/admin/<% if(editMode==='true'){%>edit-product<%}else{%>add-product<%}%>"
                     method="POST"
+                    enctype="multipart/form-data"
                >
                     <div class="form-control">
                          <label for="title">Book Title</label>
@@ -21,14 +22,14 @@
                               type="text"
                               name="title"
                               value="<% if(editMode==='true'||hasError){%><%=product.title%><%};%>"
-                              value
+                              
                          />
-                         <label for="imageUrl">Image Url</label>
+                         <label for="image">Image</label>
                          <input
-                         class=" <%= errorMessage.find(e=>e.param==='imageUrl')?'invalid':''%> "
-                              type="text"
-                              name="imageUrl"
-                              value="<% if(editMode==='true'||hasError){%><%=product.imageUrl%><%};%>"
+                         
+                              type="file"
+                              name="image"
+                             
                          />
                          <label for="description">Description</label>
                          <textarea 
