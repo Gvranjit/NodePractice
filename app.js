@@ -1,10 +1,13 @@
 const log = require("./logger"); // my own external logger function
+
 //const http = require('http');
 const path = require("path");
+
 // const router = require('./router');
 const { port } = require("./config.json");
 
 const User = require("./models/user");
+
 //third party modules
 const express = require("express");
 const session = require("express-session");
@@ -14,7 +17,6 @@ const mongoose = require("mongoose");
 const MongoDbStore = require("connect-mongodb-session")(session);
 const mongoDbUri = "mongodb://localhost:27017/shop";
 const csrf = require("csurf");
-
 const flash = require("connect-flash");
 
 const store = new MongoDbStore({
@@ -33,19 +35,33 @@ const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 const errorHandler = require("./routes/error");
 const authRoutes = require("./routes/auth");
+
 const fileStorage = multer.diskStorage({
      destination: (req, file, cb) => {
-          cb(null, "images");
+          cb(null, "public/images");
      },
      filename: (req, file, cb) => {
           cb(null, Date.now().toString() + "-" + file.originalname);
      },
 });
+
+const fileFilter = (req, file, cb) => {
+     if (
+          file.mimetype === "image/png" ||
+          file.mimetype === "image/jpeg" ||
+          file.mimetype === "image/jpg"
+     ) {
+          cb(null, true);
+     } else {
+          cb(null, false);
+     }
+};
+
 // const mongoConnect = require("./helpers/database").mongoConnect;
 
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(multer({ storage: fileStorage }).single("image"));
-
+app.use(multer({ storage: fileStorage, fileFilter: fileFilter }).single("image"));
+app.use("/public", express.static(path.join(__dirname, "public")));
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use(
@@ -87,7 +103,8 @@ app.use((req, res, next) => {
 app.use((req, res, next) => {
      res.locals.isAuthenticated = req.session.isLoggedIn;
      res.locals.csrfToken = req.csrfToken();
-     (res.locals.errorMessage = req.flash("error")), (res.locals.message = req.flash("message"));
+     res.locals.errorMessage = req.flash("error");
+     res.locals.message = req.flash("message");
      res.locals.oldInput = {};
      res.locals.hasError = false;
      next();
@@ -100,15 +117,29 @@ app.use("/admin", adminRoutes);
 app.use(shopRoutes);
 
 app.use(authRoutes);
-
 app.use(errorHandler);
 
+//System error message handler.I wanted to place this inside errorHandler, but somehow it doesn't work.
 app.use((error, req, res, next) => {
-     res.status(error.httpStatusCode).render("500", {
+     console.log(
+          `The following System Error has Occured.\n Don't worry, I know you can solve this :)\n
+          ooooooooooo oooooooooo  oooooooooo    ooooooo   oooooooooo  
+          888         888    888  888    888 o888   888o  888    888 
+          888ooo8     888oooo88   888oooo88  888     888  888oooo88  
+          888         888  88o    888  88o   888o   o888  888  88o   
+          o888ooo8888 o888o  88o8 o888o  88o8   88ooo88   o888o  88o8 \n`
+     );
+     console.log(error);
+     res.status(500).render("500", {
           pageTitle: "ERROR",
           path: "Error",
+          isAuthenticated: req.session.isLoggedIn,
+          hasError: true,
+          errorMessage: [],
+          message: [],
      });
 });
+
 //connection
 
 mongoose

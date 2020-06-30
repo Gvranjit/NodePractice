@@ -2,6 +2,7 @@ const Product = require("../models/product.js");
 // const products = new Product();
 const { validationResult } = require("express-validator");
 const mongoose = require("mongoose");
+const path = require("../helpers/path.js");
 
 function throw500(err) {}
 
@@ -20,10 +21,26 @@ exports.postAddProduct = (req, res, next) => {
 
      const r = req.body;
      console.log("IMAGE :  ", req.file);
+     const image = req.file;
+
      const errors = validationResult(req);
-     console.log(errors);
+     if (!req.file) {
+          return res.status(422).render("admin/edit-product", {
+               pageTitle: "Add Product",
+               path: "add-product",
+               editMode: false,
+               hasError: true,
+               errorMessage: [{ msg: "attached image is not valid" }],
+               product: {
+                    title: r.title,
+                    description: r.description,
+                    price: r.price,
+               },
+          });
+     }
+
      if (!errors.isEmpty()) {
-          return res.render("admin/edit-product", {
+          return res.status(422).render("admin/edit-product", {
                pageTitle: "Add Product",
                path: "add-product",
                editMode: false,
@@ -33,16 +50,20 @@ exports.postAddProduct = (req, res, next) => {
                     title: r.title,
                     description: r.description,
                     price: r.price,
-                    imageUrl: req.file,
+                    image: req.file,
                },
           });
      }
 
+     //EVERYTHING looks good, now i can generate Image URL and proceed to store
+
+     const imageUrl = image.path;
+     console.log("THIS IS A PLACE IS HOULD BE IN ", imageUrl);
      const product = new Product({
           title: r.title,
           description: r.description,
           price: r.price,
-          imageUrl: req.file,
+          imageUrl: imageUrl,
           userId: req.session.user, //you could do  user._id but its not necessary because Mongoose Filters the ID out for you.
      });
 
@@ -57,6 +78,7 @@ exports.postAddProduct = (req, res, next) => {
                console.log("THERE WAS A SYSTEM ERRRORRR");
                const error = new Error(err);
                error.httpStatusCode = 500;
+               console.log("THIS IS SUPER WEIRD", error);
                return next(error);
           });
 };
@@ -94,6 +116,7 @@ exports.postUpdateProduct = (req, res, next) => {
      const updatedPrice = req.body.price;
      const updatedDescription = req.body.description;
      const updatedImageUrl = req.body.imageUrl;
+     const image = req.file;
 
      const errors = validationResult(req);
      console.log(errors);
@@ -120,10 +143,14 @@ exports.postUpdateProduct = (req, res, next) => {
                     console.log("redirecting");
                     return res.redirect("/");
                }
+               if (req.file) {
+                    p.imageUrl = image.path;
+               }
+
                p.title = updatedTitle;
                p.description = updatedDescription;
                p.price = updatedPrice;
-               p.imageUrl = updatedImageUrl;
+
                return p.save().then((result) => {
                     res.redirect("/admin/admin-product-list");
                });

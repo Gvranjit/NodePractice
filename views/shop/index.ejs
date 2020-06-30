@@ -14,7 +14,7 @@
                          </header>
                          <div class="card__image">
                               <a href="/products/<%=product._id%>"
-                                   ><img src="<%=product.imageUrl%>" alt="A Book"
+                                   ><img src="/<%=product.imageUrl%>" alt="A Book"
                               /></a>
                          </div>
                          <div class="card__content">
@@ -34,6 +34,7 @@
                     <h1>No products found</h1>
                     <%}%>
                </div>
+            <%- include ('../includes/pagination.ejs') %> 
           </main>
           <%- include('../includes/end.ejs') %>
      </body>

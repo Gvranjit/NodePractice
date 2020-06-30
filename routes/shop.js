@@ -24,6 +24,7 @@ router.post("/cart", isAuth, shopController.postCart);
 router.get("/orders", isAuth, shopController.getOrders);
 
 router.get("/create-order", isAuth, shopController.postCreateOrder);
+router.post("/invoice/:orderId", isAuth, shopController.postSendInvoice);
 
 router.get("/", shopController.getIndex);
 

@@ -17,7 +17,16 @@
                          <li>Product Price: <%=product.productId.price %></li>
                          <li>Purchased Quantity: <%=product.qty %></li>
                          <li>________________________________________</li>
-                         <% }); %> <% }); %>
+                         <!-- Creating a form for Post request instead because it is easier to compare and more secure then (Cleaner in a way)-->
+                           
+                         
+                         <% }); %>
+                         <li><form action ="/invoice/<%=order._id%>" method="POST">
+                              <input type="submit" value="GET INVOICE"> </input>
+                              <input type="hidden" name="_csrf" value="<%=csrfToken%>"/>
+                              <input type="hidden" name="userId" value="<%=order.userId._id%>"/>
+                              <input type="hidden" name="orderId" value="<%=order._id%>"/>
+                         </form>  </li> <% }); %>
                     </ul>
                </div>
           </main>

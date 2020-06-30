@@ -179,3 +179,23 @@ main {
      position: fixed;
      right: 2rem;
 }
+
+.pagination {
+     text-align: center;
+}
+
+.pagination a {
+     text-decoration: none;
+     color: darkgreen;
+     padding: 0.5rem;
+     border: 1px solid darkgreen;
+     background: white;
+     margin: 2rem;
+}
+.pagination a:hover,
+.pagination a:active,
+.pagination a.active {
+     background: rgba(0, 93, 0, 0.507);
+     color: white;
+     border-color: white;
+}
