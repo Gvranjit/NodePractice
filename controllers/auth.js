@@ -1,6 +1,7 @@
 const crypto = require("crypto");
-const { password, emailSender } = require("../config.json"); //this should be pulled from environment variables since they are sensitive
-
+const { emailSender } = require("../config.json");
+const password = process.env.EMAIL_PASSWORD;
+// const emailSender = process.env.EMAIL_SENDER;
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
