@@ -31,6 +31,7 @@
                          </div>
                          <div class="card__actions">
                               <form action="/cart/remove/<%=product._id%>" method="POST">
+                                   <input type="hidden" name="_csrf" value="<%=csrfToken%>">
                                    <button type="submit" class="btn">
                                         Remove from cart
                                    </button>
@@ -43,7 +44,7 @@
                </div>
                <div><h1 class="cart-total">Total : Rs.<%= totalPrice %></h1></div>
                <div class="centered">
-                    <form action="/create-order">
+                    <form action="/checkout">
                          <button class="btn" type="submit">Order</button>
                     </form>
                </div>

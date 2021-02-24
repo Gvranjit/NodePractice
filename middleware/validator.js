@@ -28,6 +28,7 @@ exports.checkPasswordMatches = body("password")
 
 exports.checkEmailValid = check("email")
      .notEmpty()
+     .normalizeEmail()
      .withMessage("The Email field must not be empty")
      .isEmail()
      .withMessage("This is not a valid Email");

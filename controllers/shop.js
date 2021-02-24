@@ -9,8 +9,12 @@ const Order = require("../models/order.js");
 //PDFkit
 const PDFDocument = require("pdfkit");
 const order = require("../models/order.js");
-const { bold } = require("../helpers/path.js");
 const { ITEMS_PER_PAGE } = require("../config.json").shop;
+// const { stripeKey } = require("../config.json"); //shouldnt store apis in config files.
+
+const stripeKey = process.env.STRIPE_API_KEY;
+
+const stripe = require("stripe")(stripeKey);
 // //const Cart = require("../models/cart");
 // const { get } = require("../routes/shop.js");
 // const User = require("../models/user.js");
@@ -140,7 +144,49 @@ exports.getOrders = (req, res, next) => {
           .catch((err) => console.log(err));
 };
 
-exports.postCreateOrder = (req, res, next) => {
+exports.getCheckout = (req, res, next) => {
+     let products;
+     let totalPrice = 0;
+
+     req.session.user
+          .getCart()
+          .then((cartItems) => {
+               products = cartItems;
+               cartItems.items.forEach((cartItem) => {
+                    totalPrice += cartItem.productId.price * cartItem.qty;
+               });
+
+               return stripe.checkout.sessions.create({
+                    payment_method_types: ["card"],
+                    line_items: products.items.map((p) => {
+                         return {
+                              name: p.productId.title,
+                              description: p.productId.description,
+                              amount: p.productId.price * 100,
+                              currency: "npr",
+                              quantity: p.qty,
+                         };
+                    }),
+                    success_url: req.protocol + "://" + req.get("host") + "/checkout/success", //http://localhost:80
+                    cancel_url: req.protocol + "://" + req.get("host") + "/checkout/cancel",
+               });
+          })
+          .then((stripeSession) => {
+               res.render("shop/checkout", {
+                    pageTitle: "Checkout",
+                    path: "checkout",
+                    prods: products,
+                    totalPrice: totalPrice,
+                    isAuthenticated: req.session.isLoggedIn,
+                    stripeSessionId: stripeSession.id,
+               });
+          })
+          .catch((err) => {
+               next(err);
+          });
+};
+
+exports.getCreateOrder = (req, res, next) => {
      req.session.user
           .createOrder()
 

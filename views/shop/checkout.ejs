@@ -1,15 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
      <%- include('../includes/head.ejs') %>
-
+     <link rel="stylesheet" href="/css/checkout.css">
      <body>
           <%- include('../includes/navigation.ejs') %>
 
           <main>
-               <div class="grid">
-                    CHECKOUT DUMMY
-               </div>
+
+               <h1 class="centered">CHECKOUT:</h1>
+               <ul class="cart__items-list">
+                    <% prods.items.forEach(product => { %>
+                     <li> <%=product.productId.title %>   :   <%=product.productId.price %>  = <%=product.qty %> Pcs</li>
+        
+
+                    <% }) %>
+
+                    <div><h2>Total: Rs. <%= totalPrice %> </h2></div>
+                    <div>
+                         <button id="order-btn" class="btn">ORDER</button>
+                         <script src="https://js.stripe.com/v3/"></script>
+                         <script>var stripe=Stripe('pk_test_51GzyJLFG9yNO98YucagXEW7AC0FSyln8OZx6Naf4LM672WsnwBmZsup58vbAJMnyzkeUUl7FeWVWmTbOVq3bxx9f00B32dJtEY')
+                         var orderBtn=document.getElementById('order-btn');
+                         orderBtn.addEventListener('click',function(){
+                              stripe.redirectToCheckout({
+                                   sessionId: "<%=stripeSessionId%>"
+                              })
+                         })
+                         </script>
+                    </div>
+
+               </ul>
           </main>
           <%- include('../includes/end.ejs') %>
      </body>
 </html>
+                         

@@ -28,14 +28,13 @@
                               <a href="/admin/edit-product/<%= product._id %>?edit=true" class="btn" type="submit">
                                    Edit</a>  
                               </button>
-                              <form class="btn__form" action="/admin/delete-product/<%=product._id%>" method="POST">
+                              
                                     <!--This is a dirty way. Lets try passing the value of product id only and find the price in the backend. -->
                                     <!-- <input type="hidden" name  = "productPrice" value ="<%=product.price%>"></input> -->
-                                   <button class="btn"  type="submit">
-                                        <input type="hidden" name="_csrf" value="<%=csrfToken%>" />
-                                       
-                                   Delete
-                              </button></form>
+                                   <input type="hidden" value="<%=csrfToken%>" name="_csrf">
+                                   <input type="hidden" value="<%=product._id%>" name="productId">
+                                   <button class="btn"  type="submit" onclick="deleteProduct(this)"> Delete
+                              </button>
                               
                          </div>
                     </article>
@@ -43,7 +42,9 @@
                     <h1>No products found</h1>
                     <%}%>
                </div>
+               <%-include ('../includes/pagination.ejs') %> 
           </main>
           <%- include('../includes/end.ejs') %>
+          <script src="/js/admin.js"></script>
      </body>
 </html>

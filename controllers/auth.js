@@ -1,5 +1,5 @@
 const crypto = require("crypto");
-const { password, emailSender } = require("../config.json");
+const { password, emailSender } = require("../config.json"); //this should be pulled from environment variables since they are sensitive
 
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
@@ -7,8 +7,6 @@ const nodemailer = require("nodemailer");
 // const sendGridTransport = require("nodemailer-sendgrid-transport");
 const { validationResult } = require("express-validator");
 const user = require("../models/user");
-
-const { emailApi } = require("../config.json");
 
 // const transporter = nodemailer.createTransport(
 //      sendGridTransport({
@@ -200,7 +198,7 @@ exports.postResetController = (req, res, next) => {
                          user.resetTokenExpiration = Date.now() + 1000 * 60 * 60;
                          return user.save().then((result) => {
                               console.log("I am supposed to send the password reset token");
-
+                              console.log("EMAIL", req.body.email);
                               transporter.sendMail({
                                    to: req.body.email,
                                    from: emailSender,

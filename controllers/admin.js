@@ -4,6 +4,9 @@ const { validationResult } = require("express-validator");
 const mongoose = require("mongoose");
 const path = require("../helpers/path.js");
 
+const { ITEMS_PER_PAGE } = require("../config.json").shop;
+
+const fileHelper = require("../helpers/file");
 function throw500(err) {}
 
 exports.getAddProduct = (req, res, next) => {
@@ -150,7 +153,7 @@ exports.postUpdateProduct = (req, res, next) => {
                p.title = updatedTitle;
                p.description = updatedDescription;
                p.price = updatedPrice;
-
+               fileHelper.deleteFile(product.imageUrl);
                return p.save().then((result) => {
                     res.redirect("/admin/admin-product-list");
                });
@@ -161,30 +164,58 @@ exports.postUpdateProduct = (req, res, next) => {
      // /
 };
 
-exports.postDeleteProduct = (req, res, next) => {
+exports.deleteProduct = (req, res, next) => {
      const productId = req.params.productId;
      // const productPrice = req.body.productPrice;
      // since the above is a dirty method,this is not preferable
-     Product.deleteOne({ userId: req.session.user._id, _id: productId })
-
-          .then((result) => {
-               res.redirect("/admin/admin-product-list");
+     Product.findById(productId)
+          .then((product) => {
+               if (!product) {
+                    return next(new Error("Product Not found"));
+               }
+               fileHelper.deleteFile(product.imageUrl);
+               return Product.deleteOne({ userId: req.session.user._id, _id: productId });
           })
 
-          .catch((err) => console.log(err));
+          .then((result) => {
+               res.status(200).json({
+                    message: "Success",
+               });
+          })
+
+          .catch((err) => {
+               res.status(500).json({ message: "Deleting product failed" });
+          });
 };
 
 exports.getAdminProductList = (req, res, next) => {
-     Product.find({ userId: req.session.user._id })
-          .populate("userId")
-          // .select("title price -_id")
-          // .populate("userId", "name email -_id")
+     const page = +req.query.page || 1;
+     let totalItems;
+
+     Product.find({})
+          .countDocuments()
+          .then((numProducts) => {
+               totalItems = numProducts;
+               return Product.find({ userId: req.session.user._id })
+                    .populate("userId")
+                    .skip((page - 1) * ITEMS_PER_PAGE)
+                    .limit(ITEMS_PER_PAGE)
+                    .populate("userId");
+          })
+
           .then((products) => {
                console.log(products);
                res.render("admin/admin-product-list", {
                     prods: products,
                     pageTitle: "Admin panel Products",
                     path: "admin-p roduct-list",
+                    totalProducts: totalItems,
+                    hasNextPage: ITEMS_PER_PAGE * page < totalItems,
+                    hasPreviousPage: page > 1,
+                    nextPage: page + 1,
+                    previousPage: page - 1,
+                    lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE),
+                    currentPage: page,
                });
           })
           .catch((err) => console.log(err));

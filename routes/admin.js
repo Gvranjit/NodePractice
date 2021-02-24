@@ -18,7 +18,7 @@ router.post("/add-product", isAuth, validation.checkBookDetails, adminController
 
 router.get("/edit-product/:productId", isAuth, adminController.getEditProduct);
 
-router.post("/delete-product/:productId", isAuth, adminController.postDeleteProduct);
+router.delete("/delete-product/:productId", isAuth, adminController.deleteProduct);
 
 router.post(
      "/edit-product",
