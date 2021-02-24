@@ -1,7 +1,7 @@
 node_modules
 data
 data/products.json
-config.json
+
 /data/*
 /public/images
 /images
