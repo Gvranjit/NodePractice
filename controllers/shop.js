@@ -56,11 +56,16 @@ exports.getCart = (req, res, next) => {
 
 exports.postCart = (req, res, next) => {
      let user = req.session.user;
-     console.log("hi", user.name);
+     console.log("hi", user.email);
      const productId = req.body.productId;
-     console.log(productId);
+
      Product.findById(productId)
           .then((product) => {
+               console.log("Product creator : ", product.userId, user._id);
+               if (product.userId.toString() === user._id.toString()) {
+                    req.flash("message", "You cannot add your own product to cart ! ");
+                    return res.redirect("/");
+               }
                return user.addToCart(product);
           })
           .then((result) => {
