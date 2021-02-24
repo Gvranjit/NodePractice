@@ -16,7 +16,7 @@ const multer = require("multer");
 const mongoose = require("mongoose");
 const MongoDbStore = require("connect-mongodb-session")(session);
 const mongoDbUri =
-     "mongodb+srv://node_app:lovely@cluster0.ddjwp.gcp.mongodb.net/bookshop?retryWrites=true&w=majorit";
+     "mongodb+srv://node_app:lovely@cluster0.ddjwp.gcp.mongodb.net/bookshop?retryWrites=true&w=majority";
 const csrf = require("csurf");
 const flash = require("connect-flash");
 
