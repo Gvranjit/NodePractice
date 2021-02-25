@@ -200,22 +200,32 @@ exports.postResetController = (req, res, next) => {
                          return user.save().then((result) => {
                               console.log("I am supposed to send the password reset token");
                               console.log("EMAIL", req.body.email);
-                              transporter.sendMail({
-                                   to: req.body.email,
-                                   from: emailSender,
-                                   subject: "Password Reset",
-                                   html: `
+                              transporter
+                                   .sendMail({
+                                        to: req.body.email,
+                                        from: emailSender,
+                                        subject: "Password Reset",
+                                        html: `
                                    <p> You requested a password reset</p>
                                    <p> Click this <a href="http://gvranjit-60636.portmap.io:60636/new-password/${token}">link</a> to set a new password.</p>
                                    <p>If the link doesn't work, please paste this link to your brower addressbar : </p>
                                    <p>http://gvranjit-60636.portmap.io:60636/new-password/${token}</p>
                                    `,
-                              });
-                              req.flash(
-                                   "message",
-                                   "An Email was sent to you with the Password Reset Instructions"
-                              );
-                              return res.redirect("/login");
+                                   })
+                                   .then((emailSent) => {
+                                        req.flash(
+                                             "message",
+                                             "An Email was sent to you with the Password Reset Instructions"
+                                        );
+                                        return res.redirect("/login");
+                                   })
+                                   .catch((err) => {
+                                        req.flash(
+                                             "error",
+                                             "Something went wrong while trying to send an email"
+                                        );
+                                        return res.redirect("/reset        ");
+                                   });
                          });
                     }
                })
