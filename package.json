@@ -5,12 +5,13 @@
      "main": "app.js",
      "scripts": {
           "test": "mocha",
-          "start": "node app.js"
+          "start": "node app.js",
+          "nodemon": "nodemon app.js"
      },
      "author": "Code",
      "license": "ISC",
      "devDependencies": {
-          "nodemon": "^2.0.4",
+          "nodemon": "^2.0.7",
           "validator": "^13.1.1",
           "validator.js": "^2.0.4"
      },
