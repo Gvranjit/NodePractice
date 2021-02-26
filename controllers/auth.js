@@ -1,6 +1,6 @@
 const crypto = require("crypto");
-const { emailSender } = require("../config.json");
-const password = process.env.EMAIL_PASSWORD;
+const { emailSender, password } = require("../config.json");
+// const password = process.env.EMAIL_PASSWORD;
 // const emailSender = process.env.EMAIL_SENDER;
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");

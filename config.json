@@ -1,6 +1,5 @@
 {
      "port": 80,
      "shop": { "ITEMS_PER_PAGE": 3 },
-     "emailSender": "craftnepal@hotmail.com",
-     "passwordFormat": "/(((.?)+[A-Z](.?))((.?)+[a-z](.?)))|(((.?)+[a-z](.?))((.?)+[A-Z](.?)))/i"
+     "emailSender": "craftnepal@hotmail.com"
 }
