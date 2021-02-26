@@ -147,6 +147,7 @@ mongoose
      .connect(mongoDbUri)
 
      .then(() => {
-          app.listen(process.env.PORT);
+          app.listen(port);
+          console.log(port);
      })
      .catch((err) => console.log(err));
