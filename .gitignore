@@ -4,4 +4,4 @@ data/products.json
 /data/*
 /public/images
 /images
-config.json
+*.json
